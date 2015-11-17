@@ -1,0 +1,79 @@
+<div>
+
+	<div class="row">
+		<div class="col-md-4 col-md-offset-4">
+			<select class="form-control" name="TaskListSelect" id="TaskListSelect" ng-model="selectedList" ng-options="option.get('name') for option in taskLists" ng-change="changeList()"></select>
+		</div>
+	</div>
+
+
+	<div class="tasks-container" ng-show="tasks.length > 0">
+	<div class="task-box task-status-{{task.get('status')}}" ng-repeat="task in tasks">
+		<div class="task-header clearfix">
+			<div style="float: left"><h1>{{task.get('name')}}</h1></div>
+			<div class="toolbox" style="float: right">
+				<div class="btn-group">
+					<button class="btn btn-default toggle-btn" ng-click="expandDetails(task)"><span class="glyphicon glyphicon-chevron-down"></span></button>
+					<button class="btn btn-default edit-btn" ng-click="updateTaskBtn(task)"><span class="glyphicon glyphicon-pencil"></span></button>
+					<button class="btn btn-default done-btn" ng-click="changeStatus(task)"><span class="glyphicon glyphicon-ok"></span></button>
+				</div>
+			</div>
+		</div>
+		<div class="task-description animation-show-hide" ng-show="task.details_expanded">
+			<hr/>
+			<p>{{task.get('description')}}</p>
+		</div>
+	</div>
+	</div>
+</div>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" ng-click="addNewTask()"> Add task</button>
+<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" ng-click="addNewList()"> Add list</button>
+
+
+<!-- Modal -->
+
+
+<div class="modal fade" id="list-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">{{modal.title}}</h4>
+      </div>
+      <div class="modal-body">
+        	<div class="row">
+			<div class="col-md-6">
+				<input type="text" placeholder="Tytuł" class="form-control" ng-model="list.name">
+			</div>
+		</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default modalCancelBtn" data-dismiss="modal">Anuluj</button>
+        <button type="button" class="btn btn-primary modalSaveBtn" data-dismiss="modal" ng-click="saveList()">Zapisz</button>
+        <button type="button" class="btn btn-primary modalUpdateBtn" data-dismiss="modal" ng-click="updateList()">Aktualizuj</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+
+	$(document).ready(function(){
+		console.log('ready!');
+		$(".toggle-btn").bind("click", function(event){
+			console.log('clicked');
+			console.log(event);
+
+			$(event).find(".task-description").toggle();
+
+			$('input[type="range"]').rangeslider();	
+		});
+
+	});
+
+</script>
+
+

@@ -1,0 +1,81 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+
+body{
+	background-color: lightgrey;
+}
+
+#container{
+	max-width: 720px;
+	margin: 0 auto;
+	background-color: lightblue;
+}
+
+.clearfix:after{
+	content:"";
+	display:table;
+	clear:both;
+}
+
+.recipe_teaser{
+	margin:10px;
+	padding: 10px;
+	background-color: darkgrey;
+
+}
+
+.task_description{
+	
+}
+
+.animation-show-hide {
+  -webkit-transition:all linear 0.5s;
+  transition:all linear 0.5s;
+}
+
+.animation-show-hide.ng-hide {
+  opacity:0;
+}
+
+.recipe_teaser img{	
+	margin: 10px;
+}
+
+.task-status-1 h1,
+.task-status-1 p
+{
+	text-decoration: line-through;
+	color: #ccc;
+}
+
+.tasks-container{
+	display: block;
+	width: 100%;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #555;
+	background-color: #fff;
+	background-image: none;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+.tasks-container .task-box{
+	padding: 10px;
+	border-bottom: 1px solid #ccc;
+}
+
+
+.tasks-container .task-box:last-child{
+	border:none;
+}
+
+.modal h4{
+	display: block;
+	width: 100%;
+	text-align: center;
+	font-weight: bold;
+	font-transform: uppercase;
+}

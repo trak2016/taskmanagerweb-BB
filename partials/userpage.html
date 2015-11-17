@@ -1,0 +1,21 @@
+<div class="btn-group" style="width:100%">
+	<button class="btn btn-default">Login</button>
+	<button class="btn btn-default">Register</button>
+
+</div>
+
+
+<div id="loginForm">
+	<input class="form-control" type="text" ng-model="user.username" placeholder="Login" >
+	<input class="form-control" type="text" ng-model="user.password" placeholder="Hasło" >
+	<button class="btn btn-default" ng-click="login()">Zaloguj</button>
+
+</div>
+
+
+<div id="registerForm">
+	<input class="form-control" type="text" ng-model="user.username" placeholder="Login" >
+	<input class="form-control" type="text" ng-model="user.password" placeholder="Hasło" >
+	<input class="form-control" type="text" ng-model="user.repeat" placeholder="Powtórz Hasło" >
+	<button class="btn btn-default" ng-click="register()">Zarejestruj</button>
+</div>
