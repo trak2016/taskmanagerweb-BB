@@ -83,7 +83,7 @@ TMControllers.controller('TasksCtrl',['$scope', 'TasksService', '$routeParams', 
 	$scope.addNewTask = function(){
 		$scope.modal.title = "Dodaj nowe zadanie";
 		if(!$scope.selectedList){ humanMsg.displayMsg("Lista nie została wybrana."); return;}
-		$scope.task = {staus: 0, priority:3};
+		$scope.task = {status: 0, priority:3};
 		$('#task-modal').modal('show');
 		$('#task-modal .modal-footer button').hide(); //hide all buttons
 		$('#task-modal .modal-footer button.modalCancelBtn').show();
@@ -217,11 +217,46 @@ TMControllers.controller('TasksCtrl',['$scope', 'TasksService', '$routeParams', 
 }]);
 
 
-TMControllers.controller('UserCtrl',['$scope', 'TasksService', '$routeParams', '$http', function ($scope, TaskService, $routeParams, $http) {
+TMControllers.controller('UserCtrl',['$scope', 'TasksService', 'Utils', '$routeParams', '$http', function ($scope, TaskService, Utils, $routeParams, $http) {
 
 	Parse.initialize("zG1XiepKQw4AYekUcSGKXePvP4dRjyr4S0ZtL7wV","9ze6PNNWbPxX2rlRBmdRHHD6jXnqqPyTyTyBPJic");
 
+	validateUser = function(user){
+		var valid = true;
 
+		if(typeof user === "undefined"){ 
+			valid = false; 
+		} else {
+			if(typeof user.username === "undefined"){ valid = false; } 
+			if(typeof user.password === "undefined"){ valid = false; }
+			if(typeof user.repeat === "undefined"){ valid = false; }
+		}
+	
+		if(valid){
+			if(user.password !== user.repeat){
+				valid = false;
+			}
+	
+		}
+
+		return valid;
+	},
+
+	$scope.registerUserBtn = function(){
+		if(!validateUser($scope.user)){
+			return;
+		}
+
+		(new Parse.User()).signUp(Utils.copy($scope.user, ['username', 'password']) , {
+			success: function(user){
+				console.log("Success");
+			},
+			error: function(user, error){
+				console.log("Error: "+error);
+			}	
+		});
+
+	}
 
 
 }]);

@@ -23,3 +23,24 @@ TMServices.factory('TasksService', function($http, $log, $q){
 	}
 });
 
+
+TMServices.factory('Utils', function($log, $q){ 
+
+	return{ 
+		copy: function(obj, keys){
+			
+			if(typeof keys === 'undefined'){
+				return JSON.parse(JSON.stringify(obj));
+			}
+
+			var newObj = {};
+
+			for(var key in keys){
+				newObj[keys[key]] = obj[keys[key]];
+			}
+
+			return newObj;
+		},
+	}
+});
+
