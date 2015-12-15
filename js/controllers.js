@@ -1,6 +1,6 @@
 var TMControllers = angular.module('TMControllers', []);
 
-TMControllers.controller('TasksCtrl',['$scope', 'TasksService', '$routeParams', '$http', function ($scope, TaskService, $routeParams, $http) {
+TMControllers.controller('TasksCtrl',['$scope', 'TasksService', '$routeParams', '$http', 'Utils', function ($scope, TaskService, $routeParams, $http, Utils) {
 
 	Parse.initialize("zG1XiepKQw4AYekUcSGKXePvP4dRjyr4S0ZtL7wV","9ze6PNNWbPxX2rlRBmdRHHD6jXnqqPyTyTyBPJic");
 
@@ -220,6 +220,7 @@ TMControllers.controller('TasksCtrl',['$scope', 'TasksService', '$routeParams', 
       			success : function(list) {
 				for(attr in $scope.list)
 					list.set(attr, $scope.list[attr]);
+					list.set('user', Parse.User.current());
 				list.save({
 					success:function(list){
 						$scope.getLists(list.id);
@@ -296,7 +297,7 @@ TMControllers.controller('TasksCtrl',['$scope', 'TasksService', '$routeParams', 
 		$scope.task.taskList = $scope.selectedList;
 		$scope.task.priority = (typeof $scope.task.priority !== 'undefined') ? parseInt($scope.task.priority) : 3;
 		
-		var task = new Task($scope.task); //Create parse object from JSON object
+		var task = new Task(Utils.copy($scope.task, ['description', 'dueTo', 'name', 'priority', 'status', 'taskList'])); //Create parse object from JSON object
 		
 		task.save(null, {
 			success: function(task) {
@@ -378,7 +379,8 @@ TMControllers.controller('TasksCtrl',['$scope', 'TasksService', '$routeParams', 
 		});
 	}
 
-	$scope.changeMilestoneStatus = function(milestone){
+	$scope.changeMilestoneStatus = function(milestone, taskClosed){
+		if(taskClosed){return;}
 		var milestoneID = milestone.id;
 		var query = new Parse.Query(Milestone);
 		query.equalTo("objectId", milestoneID);
@@ -454,7 +456,7 @@ TMControllers.controller('UserCtrl',['$scope', 'TasksService', 'Utils', '$routeP
 
 	$scope.registerUserBtn = function(){
 		if(!validateUser($scope.user)){
-			return;
+			humanMsg.displayMsg('Wypelnij wszystkie pola.'); return;
 		}
 
 		(new Parse.User()).signUp(Utils.copy($scope.user, ['username', 'password']) , {

@@ -8,15 +8,15 @@
 
 
 	<div class="tasks-container" ng-show="tasks.length > 0">
-	<div class="task-box task-status-{{task.get('status')}} task-priority-{{task.get('priority')}}" ng-repeat="task in tasks | orderBy: task.get('priority')">
+	<div class="task-box task-status-{{task.get('status')}} task-priority-{{task.get('priority')}}" ng-repeat="task in tasks">
 	<!--div class="task-box task-status-{{task.get('status')}} task-priority-{{task.get('priority')}}" ng-repeat="task in tasks | orderBy: [task.get('status'), task.get('priority')]"-->
 		<div class="task-header clearfix">
 			<div style="float: left"><h1>{{task.get('name')}}</h1></div>
 			<div class="toolbox" style="float: right">
 				<div class="btn-group">
 					<button class="btn btn-default toggle-btn" ng-click="expandDetails(task)"><span class="glyphicon glyphicon-chevron-down"></span></button>
-					<button class="btn btn-default edit-btn" ng-click="updateTaskBtn(task)"><span class="glyphicon glyphicon-pencil"></span></button>
-					<button class="btn btn-default done-btn" ng-click="changeStatus(task)"><span class="glyphicon glyphicon-ok"></span></button>
+					<button class="btn btn-default edit-btn" ng-show="task.get('status') == 0" ng-click="updateTaskBtn(task)"><span class="glyphicon glyphicon-pencil"></span></button>
+					<button class="btn btn-default done-btn" ng-click="changeStatus(task)"><span class="glyphicon glyphicon-status-{{task.get('status')}}"></span></button>
 				</div>
 			</div>
 		</div>
@@ -26,11 +26,12 @@
 
 		<div class="task-description animation-show-hide" ng-show="task.details_expanded">
 			<hr/>
+			<div ng-if="task.get('dueTo')"><span class="glyphicon glyphicon-calendar"></span>{{task.get('dueTo')  | date:'medium'}}</div>
 			<p>{{task.get('description')}}</p>
 
 			<div id="taskMilestoneList" ng-show="task.get('milestones').length > 0">
 				<h3> Milestones </h3>
-				<div class="milestone-status-{{milestone.get('status')}} milestone" ng-click="changeMilestoneStatus(milestone)"  ng-repeat="milestone in task.get('milestones') | orderBy: milestone.get('sequence')"> 
+				<div class="milestone-status-{{milestone.get('status')}} milestone" ng-click="changeMilestoneStatus(milestone, task.get('status'))"  ng-repeat="milestone in task.get('milestones') | orderBy: milestone.get('sequence')"> 
 					<span>{{milestone.get('description')}}</span>
 				</div>
 			</div>			
@@ -85,7 +86,7 @@
 		<h3> Milestones </h3>
 		<div id="taskMilestoneList">
 			<div class="milestone-status={{milestone.status}} milestone"  ng-repeat="milestone in taskMilestones"> 
-				<div  ng-if="!milestone.edit && !milestone.remove"><span ng-click="editMilestoneStart(milestone)" >{{milestone.description}}</span><button type="button" class="" ng-click="removeMilestoneBtn(milestone)">X</button></div>
+				<div  ng-if="!milestone.edit && !milestone.remove"><span ng-click="editMilestoneStart(milestone)" >{{milestone.description}}</span><button type="button" class="transparent" ng-click="removeMilestoneBtn(milestone)"><span class="glyphicon glyphicon-remove alert-danger"></span></button></div>
 				<div ng-if="milestone.edit && !milestone.remove"><input class="form-control" focus-me="milestone.edit" ng-model="milestone.description" ng-blur="editMilestoneEnd(milestone)" ng-if="milestone.edit"/></div>
 			</div>
 		</div>			
@@ -129,11 +130,7 @@
 	$(document).ready(function(){
 		console.log('ready!');
 		$(".toggle-btn").bind("click", function(event){
-			console.log('clicked');
-			console.log(event);
-
 			$(event).find(".task-description").toggle();
-
 			$('input[type="range"]').rangeslider();	
 		});
 
