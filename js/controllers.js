@@ -240,6 +240,7 @@ TMControllers.controller('TasksCtrl',['$scope', 'TasksService', '$routeParams', 
 	var saveTaskMilestone = function(task, milestoneJSON){
 		var milestone = new Milestone(JSON.parse(angular.toJson(milestoneJSON)));
 		milestone.set('task', task);
+		milestone.set('sequence', 0);
 		milestone.set('dueTo', new Date());
 		milestone.save();
 	}
@@ -328,7 +329,7 @@ TMControllers.controller('TasksCtrl',['$scope', 'TasksService', '$routeParams', 
 		query.equalTo("objectId", $scope.task.objectId);	
 		query.first({
       			success : function(task) {
-				for(attr in $scope.task)
+				for(attr in Utils.copy($scope.task, ['description', 'dueTo', 'name', 'priority', 'status', 'taskList']))
 					task.set(attr, $scope.task[attr]);
 					
 					task.set("taskList", $scope.selectedList);
