@@ -144,9 +144,14 @@ TMControllers.controller('TasksCtrl',['$scope', 'TasksService', '$routeParams', 
 	}
 	
 	$scope.addMilestoneBtn = function(){
+		if(typeof $scope.milestone == 'undefined' || $scope.milestone == ''){
+			humanMsg.displayMsg("Pole nie moze byc puste.");
+			return;			
+		}
+
 		if(typeof $scope.taskMilestones === 'undefined'){ $scope.taskMilestones = [];}
 		$scope.taskMilestones.push($.extend($scope.milestone, {status: 0, dueTo: new Date()}))
-		$scope.milestone = {};
+		$scope.milestone = '';
 	}
 
         $scope.updateTaskBtn = function(task){
@@ -175,10 +180,12 @@ TMControllers.controller('TasksCtrl',['$scope', 'TasksService', '$routeParams', 
 
         }
 
+
+
 	$scope.progress = function(task){
 		var milestones = task.get('milestones') || [];
 		var done = 0;
-
+		if(task.get('status') == 1) return 100;
 		for(stone in milestones){ done += milestones[stone].get('status') * 1;}
 
 		return parseInt((done / milestones.length) * 100);
@@ -229,6 +236,62 @@ TMControllers.controller('TasksCtrl',['$scope', 'TasksService', '$routeParams', 
 
 	}
 
+	var saveTaskMilestone = function(task, milestoneJSON){
+		var milestone = new Milestone(JSON.parse(angular.toJson(milestoneJSON)));
+		milestone.set('task', task);
+		milestone.set('dueTo', new Date());
+		milestone.save();
+	}
+
+	var updateTaskMilestone = function(task, milestoneJSON){
+		if(!milestoneJSON.objectId){return;}
+		var query = new Parse.Query(Milestone);
+		query.equalTo("objectId", milestoneJSON.objectId);	
+		query.first({
+      			success : function(stone) {
+				for(attr in milestoneJSON)
+					stone.set(attr, milestoneJSON[attr]);
+				stone.set('task', task);
+				stone.save();	
+         	 	},
+        	 	error: function(error) {
+           		 	console.log("Error: " + error.message);
+          		}
+        	});		
+
+	}
+
+	var deleteTaskMilestone = function(milestoneJSON){
+		if(!milestoneJSON.objectId){return;}
+		var query = new Parse.Query(Milestone);
+		query.equalTo("objectId", milestoneJSON.objectId);	
+		query.first({
+      			success : function(stone) {
+				stone.destroy();
+         	 	},
+        	 	error: function(error) {
+           		 	console.log("Error: " + error.message);
+          		}
+        	});		
+	
+	}
+
+	var updateTaskMilestones = function(task, milestones){
+		for(stone in milestones){
+			if(milestones[stone].remove == true){
+				if(milestones[stone].objectId){
+					deleteTaskMilestone(milestones[stone]);
+				}		
+			}else if(milestones[stone].objectId){
+				updateTaskMilestone(task, milestones[stone]);
+			}else{
+				saveTaskMilestone(task, milestones[stone]);
+			}
+		}
+
+	}
+
+
 	$scope.saveTask = function(){
 		$scope.task.taskList = $scope.selectedList;
 		$scope.task.priority = (typeof $scope.task.priority !== 'undefined') ? parseInt($scope.task.priority) : 3;
@@ -238,11 +301,8 @@ TMControllers.controller('TasksCtrl',['$scope', 'TasksService', '$routeParams', 
 		task.save(null, {
 			success: function(task) {
 				if(typeof $scope.taskMilestones !== 'undefined' && $scope.taskMilestones.length > 0){
-					for(var i = 0; $scope.taskMilestones.length; i++){
-						var milestone = new Milestone(JSON.parse(angular.toJson($scope.taskMilestones[i])));
-						milestone.set('task', task);
-						milestone.set('dueTo', new Date());
-						milestone.save();
+					for(var i = 0; i < $scope.taskMilestones.length; i++){
+						saveTaskMilestone(task, $scope.taskMilestones[i]);
 					}		
 				}
 				$scope.taskMilestones = [];	
@@ -254,6 +314,12 @@ TMControllers.controller('TasksCtrl',['$scope', 'TasksService', '$routeParams', 
 		});
 	}
 
+	
+	$scope.removeMilestoneBtn = function(stone){
+		stone.remove = true;
+	}
+
+	
 	$scope.updateTask = function(){
 		console.log("Attempt to update function");
 		$scope.task.priority = (typeof $scope.task.priority !== 'undefined') ? parseInt($scope.task.priority) : 3;
@@ -263,22 +329,12 @@ TMControllers.controller('TasksCtrl',['$scope', 'TasksService', '$routeParams', 
       			success : function(task) {
 				for(attr in $scope.task)
 					task.set(attr, $scope.task[attr]);
-	
+					
 					task.set("taskList", $scope.selectedList);
 					task.save({
 						success:function(task){
-
-						deleteTaskMilestones(task);
-						
-						if(typeof $scope.taskMilestones !== 'undefined' && $scope.taskMilestones.length > 0){
-							for(var i = 0; $scope.taskMilestones.length; i++){
-								var milestone = new Milestone(JSON.parse(angular.toJson($scope.taskMilestones[i])));
-								milestone.set('sequence', 0);
-								milestone.set('task', task);
-								milestone.set('dueTo', new Date());
-								milestone.save();
-							}		
-						}
+							updateTaskMilestones(task, $scope.taskMilestones);					
+	
 							$scope.taskMilestones = [];
 							$scope.changeList();
 						},
@@ -403,10 +459,10 @@ TMControllers.controller('UserCtrl',['$scope', 'TasksService', 'Utils', '$routeP
 
 		(new Parse.User()).signUp(Utils.copy($scope.user, ['username', 'password']) , {
 			success: function(user){
-				console.log("Success");
+				humanMsg.displayMsg("Poprawnie utworzono nowe konto.");
+				$scope.logInUserBtn();
 			},
 			error: function(user, error){
-				console.log("Error: "+error);
 			}	
 		});
 
@@ -416,9 +472,10 @@ TMControllers.controller('UserCtrl',['$scope', 'TasksService', 'Utils', '$routeP
 		Parse.User.logIn($scope.user.username, $scope.user.password, {
 			success: function(user){
 				window.location = '/';
+				humanMsg.displayMsg("Poprawnie zalogowano.");
 			},
 			error: function(user, error){
-				console.log("Error: "+error);
+				humanMsg.displayMsg("Sprawdz dane logowania");
 			}
 });
 	}

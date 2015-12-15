@@ -1,41 +1,45 @@
 <div class="row">
-	<div class="wrap center">
-		<div class="btn-group">
-			<button class="btn btn-default" ng-click="changeView('login')">Login</button>
-			<button class="btn btn-default" ng-click="changeView('register')">Register</button>
+		<div class="col-md-offset-4 col-md-4 btn-group btn-group-lg">
+			<button class="btn btn-default" style="width:50%" ng-click="changeView('login')">Login</button>
+			<button class="btn btn-default" style="width:50%" ng-click="changeView('register')">Register</button>
 		</div>
-	</div>
 </div>
 
 <div id="loginForm" ng-show="view == 'login'">
-	<div class = "col-md-offset-2 col-md-6 input-group input-group-lg">
+	<div class="row">
+	<div class = "col-md-offset-3 col-md-6 input-group input-group-lg">
 		<input class="form-control" type="text" ng-model="user.username" placeholder="Login" >
 		<span class="input-group-addon glyphicon glyphicon-user"></span>
 	</div>
-	<div class = "col-md-offset-2 col-md-6 input-group input-group-lg">
+	</div>
+	<div class="row">
+	<div class = "col-md-offset-3 col-md-6 input-group input-group-lg">
 		<input class="form-control" type="password" ng-model="user.password" placeholder="Hasło" >
 		<span class="input-group-addon glyphicon glyphicon-lock"></span>
 	</div>
-	<div class = "col-md-offset-2 col-md-6">
+	</div>
+	<div class="row">
+	<div class = "col-md-offset-3 col-md-6">
 		<button class="btn btn-default center" ng-click="logInUserBtn()">Zaloguj</button>
+	</div>
 	</div>
 </div>
 
 
 <div id="registerForm" ng-show="view == 'register'">
-	<div class = "col-md-offset-2 col-md-6 input-group input-group-lg">
+	<div class = "col-md-offset-3 col-md-6 input-group input-group-lg">
 		<input class="form-control" type="text" ng-model="user.username" placeholder="Login" >
 		<span class="input-group-addon glyphicon glyphicon-user"></span>
 	</div>
-	<div class = "col-md-offset-2 col-md-6 input-group input-group-lg">
+	<div class = "col-md-offset-3 col-md-6 input-group input-group-lg">
 		<input class="form-control" type="password" ng-model="user.password" placeholder="Hasło" >
 		<span class="input-group-addon glyphicon glyphicon-lock"></span>
 	</div>
-	<div class = "col-md-offset-2 col-md-6 input-group input-group-lg">
+	<div class = "col-md-offset-3 col-md-6 input-group input-group-lg">
 		<input class="form-control" type="password" ng-model="user.repeat" placeholder="Powtórz Hasło" >
 		<span class="input-group-addon glyphicon glyphicon-pencil"></span>
 	</div>
-	<div class = "col-md-offset-2 col-md-6">
+	<div class = "col-md-offset-3 col-md-6">
 		<button class="btn btn-default center" ng-click="registerUserBtn()">Zarejestruj</button>
 	</div>
 </div>

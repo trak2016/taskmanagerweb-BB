@@ -84,9 +84,9 @@
 		</datetimepicker>
 		<h3> Milestones </h3>
 		<div id="taskMilestoneList">
-			<div class="milestone-status={{milestone.status}} milestone"  ng-repeat="milestone in taskMilestones | orderBy: milestone.sequence"> 
-				<div ng-click="editMilestoneStart(milestone)" ng-if="!milestone.edit"><span>{{milestone.description}}</span></div>
-				<div ng-if="milestone.edit"><input class="form-control" focus-me="milestone.edit" ng-model="milestone.description" ng-blur="editMilestoneEnd(milestone)" ng-if="milestone.edit"/></div>
+			<div class="milestone-status={{milestone.status}} milestone"  ng-repeat="milestone in taskMilestones"> 
+				<div  ng-if="!milestone.edit && !milestone.remove"><span ng-click="editMilestoneStart(milestone)" >{{milestone.description}}</span><button type="button" class="" ng-click="removeMilestoneBtn(milestone)">X</button></div>
+				<div ng-if="milestone.edit && !milestone.remove"><input class="form-control" focus-me="milestone.edit" ng-model="milestone.description" ng-blur="editMilestoneEnd(milestone)" ng-if="milestone.edit"/></div>
 			</div>
 		</div>			
 		<input class="form-control" ng-model="milestone.description"></input><button type="button" class="btn btn-primary" ng-click="addMilestoneBtn()">Dodaj</button>
