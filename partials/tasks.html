@@ -8,7 +8,8 @@
 
 
 	<div class="tasks-container" ng-show="tasks.length > 0">
-	<div class="task-box task-status-{{task.get('status')}}" ng-repeat="task in tasks">
+	<div class="task-box task-status-{{task.get('status')}} task-priority-{{task.get('priority')}}" ng-repeat="task in tasks | orderBy: task.get('priority')">
+	<!--div class="task-box task-status-{{task.get('status')}} task-priority-{{task.get('priority')}}" ng-repeat="task in tasks | orderBy: [task.get('status'), task.get('priority')]"-->
 		<div class="task-header clearfix">
 			<div style="float: left"><h1>{{task.get('name')}}</h1></div>
 			<div class="toolbox" style="float: right">
@@ -19,9 +20,23 @@
 				</div>
 			</div>
 		</div>
+			<div class="progress" ng-if="task.get('milestones').length > 0">
+				<uib-progressbar animate="false" value="progress(task)" type="success"></uib-progressbar>
+			</div>
+
 		<div class="task-description animation-show-hide" ng-show="task.details_expanded">
 			<hr/>
 			<p>{{task.get('description')}}</p>
+
+			<div id="taskMilestoneList" ng-show="task.get('milestones').length > 0">
+				<h3> Milestones </h3>
+				<div class="milestone-status-{{milestone.get('status')}} milestone" ng-click="changeMilestoneStatus(milestone)"  ng-repeat="milestone in task.get('milestones') | orderBy: milestone.get('sequence')"> 
+					<span>{{milestone.get('description')}}</span>
+				</div>
+			</div>			
+
+
+
 		</div>
 	</div>
 	</div>
@@ -31,6 +46,7 @@
 <button type="button" class="btn btn-primary btn-lg" ng-click="addNewTask()"> Add task</button>
 <button type="button" class="btn btn-primary btn-lg" ng-click="addNewList()"> Add list</button>
 <button type="button" class="btn btn-primary btn-lg" ng-click="updateListBtn()"> update list</button>
+<button type="button" class="btn btn-primary btn-lg" ng-click="logoutBtn()">Wyloguj</button>
 
 
 <!-- Modal -->
@@ -55,11 +71,30 @@
 			<textarea class="form-control" ng-model="task.description" placeholder="Opis"></textarea>
 			</div>
 		</div>
+		<span><input type="checkbox" ng-model="task.setDueTo" ng-change="taskAddDate()"/>Ustawić datę zakończenia?</span>
+		 <datetimepicker ng-if="task.setDueTo" min-date="datepicker.minDate" hour-step="datepicker.hourStep" 
+      			minute-step="datepicker.minuteStep" ng-model="task.dueTo" show-meridian="datepicker.showMeridian" 
+     			date-format="dd-MMM-yyyy" date-options="datepicker.dateOptions"
+     			date-disabled="disabled(date, mode)" 
+      			readonly-date="false"
+      			hidden-time="false"
+      			hidden-date="false" 
+      			show-spinners="true"
+      			readonly-time="false">
+		</datetimepicker>
+		<h3> Milestones </h3>
+		<div id="taskMilestoneList">
+			<div class="milestone-status={{milestone.status}} milestone"  ng-repeat="milestone in taskMilestones | orderBy: milestone.sequence"> 
+				<div ng-click="editMilestoneStart(milestone)" ng-if="!milestone.edit"><span>{{milestone.description}}</span></div>
+				<div ng-if="milestone.edit"><input class="form-control" focus-me="milestone.edit" ng-model="milestone.description" ng-blur="editMilestoneEnd(milestone)" ng-if="milestone.edit"/></div>
+			</div>
+		</div>			
+		<input class="form-control" ng-model="milestone.description"></input><button type="button" class="btn btn-primary" ng-click="addMilestoneBtn()">Dodaj</button>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default modalCancelBtn" data-dismiss="modal">Anuluj</button>
-        <button type="button" class="btn btn-primary modalSaveBtn" data-dismiss="modal" ng-click="saveTask()">Zapisz</button>
-        <button type="button" class="btn btn-primary modalUpdateBtn" data-dismiss="modal" ng-click="updateTask()">Aktualizuj</button>
+        <button type="button" class="btn btn-primary modalSaveBtn" data-dismiss="modal" ng-show="modal.action == 'ADD'" ng-click="saveTask()">Zapisz</button>
+        <button type="button" class="btn btn-primary modalUpdateBtn" data-dismiss="modal" ng-show="modal.action == 'UPDATE'" ng-click="updateTask()">Aktualizuj</button>
       </div>
     </div>
   </div>
@@ -81,8 +116,8 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default modalCancelBtn" data-dismiss="modal">Anuluj</button>
-        <button type="button" class="btn btn-primary modalSaveBtn" data-dismiss="modal" ng-click="saveList()">Zapisz</button>
-        <button type="button" class="btn btn-primary modalUpdateBtn" data-dismiss="modal" ng-click="updateList()">Aktualizuj</button>
+        <button type="button" class="btn btn-primary modalSaveBtn" data-dismiss="modal" ng-show="modal.action == 'ADD'" ng-click="saveList()">Zapisz</button>
+        <button type="button" class="btn btn-primary modalUpdateBtn" data-dismiss="modal" ng-show="modal.action == 'UPDATE'" ng-click="updateList()">Aktualizuj</button>
       </div>
     </div>
   </div>

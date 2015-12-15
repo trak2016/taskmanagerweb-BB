@@ -50,6 +50,32 @@ body{
 	color: #ccc;
 }
 
+.milestone-status-1 span
+{
+	text-decoration: line-through;
+	color: #ccc;
+}
+
+.task-priority-1{
+	background-color: green;	
+}
+
+.task-priority-2{
+	background-color: lightgreen;	
+}
+
+.task-priority-3{
+	background-color: yellow;	
+}
+
+.task-priority-4{
+	background-color: pink;	
+}
+
+.task-priority-5{
+	background-color: red;	
+}
+
 .tasks-container{
 	display: block;
 	width: 100%;
@@ -78,4 +104,10 @@ body{
 	text-align: center;
 	font-weight: bold;
 	font-transform: uppercase;
+}
+
+.center{
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
 }

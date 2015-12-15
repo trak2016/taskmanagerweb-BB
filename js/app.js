@@ -2,7 +2,9 @@ var app = angular.module('TaskManagerApp', [
 	'ngRoute',
 	'TMControllers',
 	'TMServices',
-	'TMDirectives'
+	'TMDirectives',
+	'ui.bootstrap',
+	'ui.bootstrap.datetimepicker'
 ]);
 
 
